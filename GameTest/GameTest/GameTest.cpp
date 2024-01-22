@@ -159,7 +159,7 @@ public:
 		animation = Animation("resources/graphics/rusher.bmp", 0.05f, textureDimentions, true, {});
 		objectGroup = "enemy";
 
-		collisionBoxSize.w = 64.0f;
+		collisionBoxSize.w = 48.0f;
 		collisionBoxSize.h = 32.0f;
 
 		rotation = globalRotation;
