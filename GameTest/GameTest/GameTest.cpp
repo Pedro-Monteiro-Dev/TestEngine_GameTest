@@ -792,7 +792,9 @@ public:
 			boom->position.x = position.x;
 			boom->position.y = position.y;
 			engine.getLevel().addObject(boom);
+			contact.Destroy();
 			TakeShipDamage();
+			std::cout << shipHealth << "\n";
 			if (shipHealth == 0)
 			{
 				if (companionId == 1)
