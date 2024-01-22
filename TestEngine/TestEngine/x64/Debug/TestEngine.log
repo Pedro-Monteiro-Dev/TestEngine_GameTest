@@ -1,0 +1,20 @@
+﻿  engine.cpp
+C:\Users\mrsup\OneDrive\Documents\NewTestEngineVersions\TestEngine\TestEngine\TestEngine\src\engine.cpp(169,59): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\mrsup\OneDrive\Documents\NewTestEngineVersions\TestEngine\TestEngine\TestEngine\src\engine.cpp(170,60): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\mrsup\OneDrive\Documents\NewTestEngineVersions\TestEngine\TestEngine\TestEngine\src\engine.cpp(172,59): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\mrsup\OneDrive\Documents\NewTestEngineVersions\TestEngine\TestEngine\TestEngine\src\engine.cpp(173,60): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\mrsup\OneDrive\Documents\NewTestEngineVersions\TestEngine\TestEngine\TestEngine\src\engine.cpp(326,57): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\mrsup\OneDrive\Documents\NewTestEngineVersions\TestEngine\TestEngine\TestEngine\src\engine.cpp(327,57): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\mrsup\OneDrive\Documents\NewTestEngineVersions\TestEngine\TestEngine\TestEngine\src\engine.cpp(365,66): warning C4838: conversion from 'int' to 'Uint8' requires a narrowing conversion
+C:\Users\mrsup\OneDrive\Documents\NewTestEngineVersions\TestEngine\TestEngine\TestEngine\src\engine.cpp(365,106): warning C4838: conversion from 'int' to 'Uint8' requires a narrowing conversion
+C:\Users\mrsup\OneDrive\Documents\NewTestEngineVersions\TestEngine\TestEngine\TestEngine\src\engine.cpp(365,146): warning C4838: conversion from 'int' to 'Uint8' requires a narrowing conversion
+C:\Users\mrsup\OneDrive\Documents\NewTestEngineVersions\TestEngine\TestEngine\TestEngine\src\engine.cpp(390,57): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\mrsup\OneDrive\Documents\NewTestEngineVersions\TestEngine\TestEngine\TestEngine\src\engine.cpp(391,57): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\mrsup\OneDrive\Documents\NewTestEngineVersions\TestEngine\TestEngine\TestEngine\src\engine.cpp(437,66): warning C4838: conversion from 'int' to 'Uint8' requires a narrowing conversion
+C:\Users\mrsup\OneDrive\Documents\NewTestEngineVersions\TestEngine\TestEngine\TestEngine\src\engine.cpp(437,106): warning C4838: conversion from 'int' to 'Uint8' requires a narrowing conversion
+C:\Users\mrsup\OneDrive\Documents\NewTestEngineVersions\TestEngine\TestEngine\TestEngine\src\engine.cpp(437,146): warning C4838: conversion from 'int' to 'Uint8' requires a narrowing conversion
+C:\Users\mrsup\OneDrive\Documents\NewTestEngineVersions\TestEngine\TestEngine\TestEngine\src\engine.cpp(458,31): warning C4244: '=': conversion from 'const float' to 'int', possible loss of data
+C:\Users\mrsup\OneDrive\Documents\NewTestEngineVersions\TestEngine\TestEngine\TestEngine\src\engine.cpp(459,31): warning C4244: '=': conversion from 'const float' to 'int', possible loss of data
+C:\Users\mrsup\OneDrive\Documents\NewTestEngineVersions\TestEngine\TestEngine\TestEngine\src\engine.cpp(460,56): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\mrsup\OneDrive\Documents\NewTestEngineVersions\TestEngine\TestEngine\TestEngine\src\engine.cpp(461,56): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+  TestEngine.vcxproj -> C:\Users\mrsup\OneDrive\Documents\NewTestEngineVersions\TestEngine\TestEngine\x64\Debug\TestEngine.lib

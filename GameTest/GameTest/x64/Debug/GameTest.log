@@ -1,0 +1,4 @@
+﻿  GameTest.cpp
+C:\Users\mrsup\OneDrive\Documents\NewTestEngineVersions\TestEngine\GameTest\GameTest\GameTest.cpp(331,45): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\mrsup\OneDrive\Documents\NewTestEngineVersions\TestEngine\GameTest\GameTest\GameTest.cpp(394,45): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  GameTest.vcxproj -> C:\Users\mrsup\OneDrive\Documents\NewTestEngineVersions\TestEngine\TestEngine\x64\Debug\GameTest.exe
