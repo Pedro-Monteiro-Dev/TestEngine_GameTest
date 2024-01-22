@@ -7,6 +7,8 @@ Input input;
 
 float globalRotation = -90.0f;
 
+bool CompanionListBool[2] = { false,false };
+
 class Enemy : public GameObject {
 public:
 	int healthPoints = 1;
@@ -650,36 +652,197 @@ public:
 
 };
 
-
-class spaceship : public Pawn {
+class powerUpCompanion : public GameObject {
 public:
-	//float moveSpeed = 200.0f;
-	
+	float moveSpeed = 30.0f;
+
+
+	void OnStart() override {
+		int textureDimentions[2] = { 4,5 };
+
+		animation = Animation("resources/graphics/clone.bmp", 0.1f, textureDimentions, true, { AnimationCoord(0,0),AnimationCoord(1,0),AnimationCoord(2,0),AnimationCoord(3,0),
+		AnimationCoord(0,1),AnimationCoord(1,1),AnimationCoord(2,1),AnimationCoord(3,1),AnimationCoord(0, 2), AnimationCoord(1, 2), AnimationCoord(2, 2), AnimationCoord(3, 2),
+		AnimationCoord(0, 3), AnimationCoord(1, 3), AnimationCoord(2, 3), AnimationCoord(3, 3) });
+		objectGroup = "powerUpCompanion";
+
+	}
+
+	void OnUpdate() override {
+		
+		if (position.x > 640) {
+			Destroy();
+		}
+	}
+
+};
+
+class ally : public Pawn {
+public:
+
 	int shipHealthMax = 5;
 	int shipHealth = 5;
-
-	std::string currentAnimation = "";
-	int animationState = 0;
 
 	bool keyPressed = false;
 
 	int firePower = 0;
 
-	//Input playerInput;
-	//GameEngine::Engine getEngine;
+	int positionOffset = 0;
 
-	//SHORT keyStatea = GetKeyState(VK_SPACE);
+	int bulletOffset = 24;
 
-	void upgradeFirePower() {
+	void TakeShipDamage() {
+		shipHealth -= 1;
+	}
+	void HealShip() {
+		int healAmount = 2;
+
+		shipHealth += healAmount;
+
+		if (shipHealth > shipHealthMax) {
+			shipHealth = shipHealthMax;
+		}
+	}
+	void UpgradeFirePower() {
 		if (firePower < 2) {
 			firePower++;
 			std::cout << firePower << "\n";
-			
+
 		}
 	}
 
+	void ShootCheck() {
+	
+		if (GetAsyncKeyState(input.ShootAction[0]) & 0x8000) {
+			if (!keyPressed) {
+				missile* bullet = new missile();
+				bullet->position.x = position.x;
+				bullet->position.y = position.y + bulletOffset;
+				bullet->firePower = firePower;
+				engine.getLevel().addObject(bullet);
+
+				keyPressed = true;
+			}
+		}
+		else
+		{
+			keyPressed = false;
+		}
+
+	};
+
+};
+
+class companion : public ally {
+public:
+
+	GameObject* playerShip;
+
+	int companionId = 0;
+	bool recruted;
+
+	void OnStart() override {
+
+		playerShip = engine.getLevel().levelObjects[0];
+
+		shipHealthMax = 3;
+		shipHealth = 3;
+		keyPressed = false;
+		firePower = 0;
+		positionOffset = -50;
+		bulletOffset = 9;
+		recruted = false;
+
+		position.x = 0;
+		position.y = 1000.f;
+
+		int textureDimentions[2] = { 4,5 };
+		//animation = Animation("resources/graphics/clone.bmp", 0.1f, textureDimentions, true, {});
+		animation = Animation("resources/graphics/clone.bmp", 0.1f, textureDimentions, true, { AnimationCoord(0,0),AnimationCoord(1,0),AnimationCoord(2,0),AnimationCoord(3,0),
+		AnimationCoord(0,1),AnimationCoord(1,1),AnimationCoord(2,1),AnimationCoord(3,1),AnimationCoord(0, 2), AnimationCoord(1, 2), AnimationCoord(2, 2), AnimationCoord(3, 2),
+		AnimationCoord(0, 3), AnimationCoord(1, 3), AnimationCoord(2, 3), AnimationCoord(3, 3) });
+		objectGroup = "companion";
+		collisionBoxSize.w = collisionBoxSize.h = 32.0f;
+		rotation = globalRotation;
+	}
+
+	void SetPosition()
+	{
+		if (companionId == 1)
+		{
+			positionOffset = 85;
+		}
+		position.x = playerShip->position.x;
+		position.y = playerShip->position.y + positionOffset;
+		
+	}
+
+	void OnUpdate() override {
+		if(recruted)
+		{
+			ShootCheck();
+			SetPosition();
+
+		}
+	}
+
+	void OnCollideEnter(GameObject& contact) override {
+		//engine.print("Collide");
+		if (contact.objectGroup == "enemyBullet") {
+			explosion* boom = new explosion();
+			boom->position.x = position.x;
+			boom->position.y = position.y;
+			engine.getLevel().addObject(boom);
+			TakeShipDamage();
+			if (shipHealth == 0)
+			{
+				if (companionId == 1)
+				{
+					CompanionListBool[1] = false;
+				}
+
+				if (companionId == 0)
+				{
+					CompanionListBool[0] = false;
+				}
+				firePower = 0;
+				recruted = false;
+				shipHealth = shipHealthMax;
+				position.x = 0.0f;
+				position.y = 1000.0f;
+			}
+			
+		}
+
+		if (contact.objectGroup == "powerUpMissile") {
+			UpgradeFirePower();
+			contact.Destroy();
+		}
+
+		if (contact.objectGroup == "powerUpHeal") {
+			HealShip();
+			contact.Destroy();
+		}
+	}
+
+};
+
+companion* companionList[2];
+
+class spaceship : public ally {
+public:
+	
+	std::string currentAnimation = "";
+	int animationState = 0;
+
+	
+
 	void OnStart() override {
 		int textureDimentions[2] = { 7,1 };
+
+		shipHealthMax = 5;
+		shipHealth = 5;
+		keyPressed = false;
+		firePower = 0;
 
 		movementSpeed = 200.0f;
 
@@ -695,25 +858,33 @@ public:
 		rotation = globalRotation;
 	}
 
+	void RecruitCompanion() 
+	{
+		for (int i = 0; i < 2; i++)
+		{
+			if (CompanionListBool[i] == false)
+			{
+				companionList[i]->recruted = true;
+				companionList[i]->SetPosition();
+
+				CompanionListBool[i] = true;
+
+				break;
+			}
+		}
+		/*clone->playerShip = engine.getLevel().levelObjects[0];
+		clone->SetPosition();
+		clone->recruted = true;
+		engine.getLevel().addObject(clone);*/
+		
+	}
+
 	void OnUpdate() override {
 		
 		int textureDimentions[2] = { 7,1 };
 
 
-		if(GetAsyncKeyState(input.ShootAction[0]) & 0x8000) {
-			if (!keyPressed) {
-				missile* bullet = new missile();
-				bullet->position.x = position.x;
-				bullet->position.y = position.y +24;
-				bullet->firePower = firePower;
-				engine.getLevel().addObject(bullet);
-
-				keyPressed = true;
-			}
-		}
-		else {
-			keyPressed = false;
-		}
+		ShootCheck();
 
 		if (GetKeyState(input.MoveLeft[0]) & 0x8000)
 		{
@@ -765,22 +936,7 @@ public:
 		//std::cout << currentAnimation << " " << animationState << "\n";
 	}
 
-	void TakeShipDamage() {
-		shipHealth -= 1;
-	}
-
-	void HealShip() {
-		int healAmount = 2;
-
-		shipHealth += healAmount;
-
-		if (shipHealth > shipHealthMax) {
-			shipHealth = shipHealthMax;
-		}
-	}
-
 	void OnCollideEnter(GameObject& contact) override {
-		//engine.print("Collide");
 		if (contact.objectGroup == "enemyBullet") {
 			explosion* boom = new explosion();
 			boom->position.x = position.x;
@@ -791,7 +947,7 @@ public:
 		}
 
 		if (contact.objectGroup == "powerUpMissile") {
-			upgradeFirePower();
+			UpgradeFirePower();
 			contact.Destroy();
 		}
 
@@ -799,11 +955,14 @@ public:
 			HealShip();
 			contact.Destroy();
 		}
+
+		if (contact.objectGroup == "powerUpCompanion") {
+			RecruitCompanion();
+			contact.Destroy();
+		}
 	}
 
-
 };
-
 
 int main()
 {
@@ -816,7 +975,7 @@ int main()
 
 	//Game game;
 
-	
+
 
 	// Input Mapping
 
@@ -825,7 +984,7 @@ int main()
 	input.MoveLeft = { VK_LEFT };
 	input.MoveRight = { VK_RIGHT };
 	input.MoveUp = { VK_UP };
-	
+
 	GameLevel level;
 
 	LevelBackground backgroundLayer1;
@@ -848,7 +1007,13 @@ int main()
 	engine.setLevel(level);
 
 	spaceship* ship = new spaceship();
-	
+
+	companion* cloneA = new companion();
+	companionList[0] = cloneA;
+	companion* cloneB = new companion();
+	cloneB->companionId = 1;
+	companionList[1] = cloneB;
+
 	rusher* enemyA = new rusher();
 	enemyA->position.x = -150.0f;
 	enemyA->position.y = 150.0f;
@@ -861,7 +1026,11 @@ int main()
 	lonerA->position.x = 200.0f;
 	lonerA->position.y = -50.0f;
 
-	
+	loner* lonerB = new loner();
+	lonerB->position.x = 200.0f;
+	lonerB->position.y = 50.0f;
+	lonerB->moveSpeed = 0;
+
 	metalAsteroid* metalAsteroidA = new metalAsteroid();
 	metalAsteroidA->position.x = 0.0f;
 	metalAsteroidA->position.y = 250.0f;
@@ -888,11 +1057,32 @@ int main()
 	powerUpHealA->position.x = 450.0f;
 	powerUpHealA->position.y = 190.0f;
 
+	powerUpCompanion* powerUpCompanionA = new powerUpCompanion();
+	powerUpCompanionA->position.x = 500.0f;
+	powerUpCompanionA->position.y = 190.0f;
+
+	powerUpCompanion* powerUpCompanionB = new powerUpCompanion();
+	powerUpCompanionB->position.x = 550.0f;
+	powerUpCompanionB->position.y = 130.0f;
+
+	powerUpCompanion* powerUpCompanionC = new powerUpCompanion();
+	powerUpCompanionC->position.x = 400.0f;
+	powerUpCompanionC->position.y = 0.0f;
+
+	powerUpCompanion* powerUpCompanionD = new powerUpCompanion();
+	powerUpCompanionD->position.x = 600.0f;
+	powerUpCompanionD->position.y = 20.0f;
+
 	engine.getLevel().addObject(ship);
+
+	engine.getLevel().addObject(cloneA);
+	engine.getLevel().addObject(cloneB);
 
 	engine.getLevel().addObject(enemyA);
 	engine.getLevel().addObject(enemyB);
 	engine.getLevel().addObject(lonerA);
+	engine.getLevel().addObject(lonerB);
+	
 
 	//engine.getLevel().addObject(metalAsteroidA);
 	//engine.getLevel().addObject(stoneAsteroidA);
@@ -902,6 +1092,11 @@ int main()
 	engine.getLevel().addObject(powerUpB);
 	engine.getLevel().addObject(powerUpC);
 	engine.getLevel().addObject(powerUpHealA);
+	engine.getLevel().addObject(powerUpCompanionA);
+	engine.getLevel().addObject(powerUpCompanionB);
+	engine.getLevel().addObject(powerUpCompanionC);
+	engine.getLevel().addObject(powerUpCompanionD);
+
 
 	//Drone Pack
 
