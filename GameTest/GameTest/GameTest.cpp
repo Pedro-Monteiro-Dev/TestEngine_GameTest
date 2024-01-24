@@ -247,11 +247,9 @@ public:
 
 		checkDamageFeedback();
 
-		//std::cout << sin(sinOffset) << "\n";
 	}
 
 	void OnCollideEnter(GameObject& contact) override {
-		//engine.print("Collide");
 		if (contact.objectGroup == "bullet") {
 
 			explosion* boom = new explosion();
@@ -267,7 +265,6 @@ public:
 			}
 
 			contact.Destroy();
-			//Destroy();
 
 		}
 	}
@@ -289,15 +286,12 @@ public:
 	}
 
 	void OnUpdate() override {
-		//float delta = engine.deltaTime;
 		position.x += moveSpeed * engine.deltaTime;
-		//std::cout << position.y <<"\n";
 
 		
 		if (position.y > 640) {
 			Destroy();
 		}
-		//position.x -= moveSpeed * engine.getDeltaTime();
 	}
 
 };
@@ -309,7 +303,6 @@ public:
 
 	void OnStart() override {
 
-		//int textureDimentions[2];
 		int textureDimentions[2] = { 8,2 };
 		animation = Animation("resources/graphics/MAster32.bmp", 0.1f, textureDimentions, true, {});
 		
@@ -356,7 +349,6 @@ public:
 
 class stoneAsteroid : public Enemy {
 public:
-	//float moveSpeed = 60.0f;
 
 	struct
 	{
@@ -394,7 +386,6 @@ public:
 		}
 
 		collisionBoxSize.w = collisionBoxSize.h = asteroidSize;
-		//objectGroup = "bullet";
 		rotation = globalRotation;
 	}
 
@@ -452,7 +443,6 @@ public:
 
 		checkDamageFeedback();
 
-		//position.x -= moveSpeed * engine.getDeltaTime();
 	}
 
 	void OnCollideEnter(GameObject& contact) override {
@@ -473,11 +463,6 @@ public:
 					}
 
 					contact.Destroy();
-					
-					//TakeDamage(contact.firePower);
-
-
-					//Destroy();
 										
 					break;
 				case 96:
@@ -490,7 +475,6 @@ public:
 					}
 
 					contact.Destroy();
-					//Destroy();
 					break;
 				default:
 
@@ -502,8 +486,6 @@ public:
 					}
 
 					contact.Destroy();
-
-					//Destroy();
 					
 			}
 
@@ -535,13 +517,10 @@ public:
 
 
 		collisionBoxSize.w = collisionBoxSize.h = 64.0f;
-		//position.x = 50.0f;
-		//position.y = 50.0f;
 		rotation = globalRotation;
 	}
 
 	void OnCollideEnter(GameObject& contact) override {
-		//engine.print("Collide");
 		if (contact.objectGroup == "bullet") {
 
 
@@ -559,16 +538,9 @@ public:
 			}
 
 			contact.Destroy();
-			//Destroy();
 
 		}
 	}
-
-	/*
-	void animation.OnAnimationEnd() override {
-		std::cout << "Animation end" << std::endl;
-	}
-	*/
 
 
 	void OnUpdate() override {
@@ -604,22 +576,18 @@ public:
 	void OnStart() override {
 		int textureDimentions[2] = { 4,2 };
 
-		//animation = Animation("resources/graphics/LonerA.bmp", 0.05f, textureDimentions, true, {});
 		animation = Animation("resources/graphics/PUWeapon.bmp", 0.1f, textureDimentions, true, {});
 		objectGroup = "powerUpMissile";
 
 	}
 
 	void OnUpdate() override {
-		//float delta = engine.deltaTime;
-		//position.y += moveSpeed * engine.deltaTime;
-		//std::cout << position.y <<"\n";
+		position.x += moveSpeed * engine.deltaTime;
 
-		if (position.y > 480) {
+		if (position.x > 640) {
 			Destroy();
 		}
 
-		//position.x -= moveSpeed * engine.getDeltaTime();
 	}
 
 };
@@ -632,22 +600,18 @@ public:
 	void OnStart() override {
 		int textureDimentions[2] = { 4,2 };
 
-		//animation = Animation("resources/graphics/LonerA.bmp", 0.05f, textureDimentions, true, {});
 		animation = Animation("resources/graphics/PUShield.bmp", 0.1f, textureDimentions, true, {});
 		objectGroup = "powerUpHeal";
 
 	}
 
 	void OnUpdate() override {
-		//float delta = engine.deltaTime;
-		//position.y += moveSpeed * engine.deltaTime;
-		//std::cout << position.y <<"\n";
+		position.x += moveSpeed * engine.deltaTime;
 
 		if (position.y > 480) {
 			Destroy();
 		}
 
-		//position.x -= moveSpeed * engine.getDeltaTime();
 	}
 
 };
@@ -669,6 +633,8 @@ public:
 
 	void OnUpdate() override {
 		
+		position.x += moveSpeed * engine.deltaTime;
+
 		if (position.x > 640) {
 			Destroy();
 		}
@@ -705,7 +671,6 @@ public:
 	void UpgradeFirePower() {
 		if (firePower < 2) {
 			firePower++;
-			std::cout << firePower << "\n";
 
 		}
 	}
@@ -756,7 +721,6 @@ public:
 		position.y = 1000.f;
 
 		int textureDimentions[2] = { 4,5 };
-		//animation = Animation("resources/graphics/clone.bmp", 0.1f, textureDimentions, true, {});
 		animation = Animation("resources/graphics/clone.bmp", 0.1f, textureDimentions, true, { AnimationCoord(0,0),AnimationCoord(1,0),AnimationCoord(2,0),AnimationCoord(3,0),
 		AnimationCoord(0,1),AnimationCoord(1,1),AnimationCoord(2,1),AnimationCoord(3,1),AnimationCoord(0, 2), AnimationCoord(1, 2), AnimationCoord(2, 2), AnimationCoord(3, 2),
 		AnimationCoord(0, 3), AnimationCoord(1, 3), AnimationCoord(2, 3), AnimationCoord(3, 3) });
@@ -786,7 +750,6 @@ public:
 	}
 
 	void OnCollideEnter(GameObject& contact) override {
-		//engine.print("Collide");
 		if (contact.objectGroup == "enemyBullet") {
 			explosion* boom = new explosion();
 			boom->position.x = position.x;
@@ -794,7 +757,6 @@ public:
 			engine.getLevel().addObject(boom);
 			contact.Destroy();
 			TakeShipDamage();
-			std::cout << shipHealth << "\n";
 			if (shipHealth == 0)
 			{
 				if (companionId == 1)
@@ -849,8 +811,6 @@ public:
 		movementSpeed = 200.0f;
 
 		animationState = 0;
-		//currentAnimation = "Idle";
-		//animation = Animation("resources/graphics/Ship1.bmp",0.1f, textureDimentions, false, {AnimationCoord(3,0)});
 		objectGroup = "player";
 
 		position.x = 550.0f;
@@ -874,10 +834,6 @@ public:
 				break;
 			}
 		}
-		/*clone->playerShip = engine.getLevel().levelObjects[0];
-		clone->SetPosition();
-		clone->recruted = true;
-		engine.getLevel().addObject(clone);*/
 		
 	}
 
@@ -914,7 +870,6 @@ public:
 			animationState = 0;
 		}
 		
-		//std::cout << currentAnimation << "\n";
 
 		if (animationState==1 && currentAnimation != "Up")
 		{
@@ -935,7 +890,6 @@ public:
 			animation = Animation("resources/graphics/Ship1.bmp", 0.1f, textureDimentions, false, { AnimationCoord(3,0) });
 			animation.spriteIndex = 0;
 		}
-		//std::cout << currentAnimation << " " << animationState << "\n";
 	}
 
 	void OnCollideEnter(GameObject& contact) override {
@@ -1024,19 +978,27 @@ int main()
 	enemyB->position.x = -200.0f;
 	enemyB->position.y = 200.0f;
 
-	loner* lonerA = new loner();
-	lonerA->position.x = 200.0f;
-	lonerA->position.y = -50.0f;
+	rusher* enemyC = new rusher();
+	enemyC->position.x = -1750.0f;
+	enemyC->position.y = 150.0f;
 
-	loner* lonerB = new loner();
-	lonerB->position.x = 200.0f;
-	lonerB->position.y = 50.0f;
-	lonerB->moveSpeed = 0;
+	rusher* enemyD = new rusher();
+	enemyD->position.x = -1700.0f;
+	enemyD->position.y = 200.0f;
+
+	loner* lonerA = new loner();
+	lonerA->position.x = 240.0f;
+	lonerA->position.y = -150.0f;
 
 	metalAsteroid* metalAsteroidA = new metalAsteroid();
 	metalAsteroidA->position.x = 0.0f;
 	metalAsteroidA->position.y = 250.0f;
 	metalAsteroidA->asteroidSize = 96;
+
+	metalAsteroid* metalAsteroidB = new metalAsteroid();
+	metalAsteroidB->position.x = -400.0f;
+	metalAsteroidB->position.y = 250.0f;
+	metalAsteroidB->asteroidSize = 32;
 
 	stoneAsteroid* stoneAsteroidA = new stoneAsteroid();
 	stoneAsteroidA->position.x = -300.0f;
@@ -1044,36 +1006,44 @@ int main()
 	stoneAsteroidA->asteroidSize = 96;
 
 	powerUpMissile* powerUpA = new powerUpMissile();
-	powerUpA->position.x = 300.0f;
-	powerUpA->position.y = 170.0f;
+	powerUpA->position.x = -300.0f;
+	powerUpA->position.y = 370.0f;
 
 	powerUpMissile* powerUpB = new powerUpMissile();
-	powerUpB->position.x = 350.0f;
-	powerUpB->position.y = 180.0f;
+	powerUpB->position.x = -550.0f;
+	powerUpB->position.y = 380.0f;
 
 	powerUpMissile* powerUpC = new powerUpMissile();
-	powerUpC->position.x = 400.0f;
+	powerUpC->position.x = -800.0f;
 	powerUpC->position.y = 190.0f;
 
 	powerUpHeal* powerUpHealA = new powerUpHeal();
 	powerUpHealA->position.x = 450.0f;
 	powerUpHealA->position.y = 190.0f;
 
+	powerUpHeal* powerUpHealB = new powerUpHeal();
+	powerUpHealB->position.x = -800.0f;
+	powerUpHealB->position.y = 190.0f;
+
+	powerUpHeal* powerUpHealC = new powerUpHeal();
+	powerUpHealC->position.x = -850.0f;
+	powerUpHealC->position.y = 250.0f;
+
 	powerUpCompanion* powerUpCompanionA = new powerUpCompanion();
-	powerUpCompanionA->position.x = 500.0f;
-	powerUpCompanionA->position.y = 190.0f;
+	powerUpCompanionA->position.x = 300.0f;
+	powerUpCompanionA->position.y = 50.0f;
 
 	powerUpCompanion* powerUpCompanionB = new powerUpCompanion();
-	powerUpCompanionB->position.x = 550.0f;
-	powerUpCompanionB->position.y = 130.0f;
+	powerUpCompanionB->position.x = 350.0f;
+	powerUpCompanionB->position.y = 50.0f;
 
 	powerUpCompanion* powerUpCompanionC = new powerUpCompanion();
-	powerUpCompanionC->position.x = 400.0f;
-	powerUpCompanionC->position.y = 0.0f;
+	powerUpCompanionC->position.x = -400.0f;
+	powerUpCompanionC->position.y = 32.0f;
 
 	powerUpCompanion* powerUpCompanionD = new powerUpCompanion();
-	powerUpCompanionD->position.x = 600.0f;
-	powerUpCompanionD->position.y = 20.0f;
+	powerUpCompanionD->position.x = -800.0f;
+	powerUpCompanionD->position.y = 32.0f;
 
 	engine.getLevel().addObject(ship);
 
@@ -1082,46 +1052,43 @@ int main()
 
 	engine.getLevel().addObject(enemyA);
 	engine.getLevel().addObject(enemyB);
+	engine.getLevel().addObject(enemyC);
+	engine.getLevel().addObject(enemyD);
 	engine.getLevel().addObject(lonerA);
-	engine.getLevel().addObject(lonerB);
 	
-
-	//engine.getLevel().addObject(metalAsteroidA);
-	//engine.getLevel().addObject(stoneAsteroidA);
+	engine.getLevel().addObject(metalAsteroidA);
+	engine.getLevel().addObject(metalAsteroidB);
+	engine.getLevel().addObject(stoneAsteroidA);
 	
-
 	engine.getLevel().addObject(powerUpA);
 	engine.getLevel().addObject(powerUpB);
 	engine.getLevel().addObject(powerUpC);
+	
 	engine.getLevel().addObject(powerUpHealA);
+	engine.getLevel().addObject(powerUpHealB);
+	engine.getLevel().addObject(powerUpHealC);
+	
 	engine.getLevel().addObject(powerUpCompanionA);
 	engine.getLevel().addObject(powerUpCompanionB);
 	engine.getLevel().addObject(powerUpCompanionC);
 	engine.getLevel().addObject(powerUpCompanionD);
-
-
+	
 	//Drone Pack
 
 	for (int i = 0; i < 7; ++i)
 	{
 
 		drone* dronePack = new drone();
-		dronePack->position.x = 30.0f + (i * 35);
+		dronePack->position.x = -600.0f + (i * 35);
 		dronePack->position.y = 350.0f ;
 		dronePack->packID = i;
 
 		engine.getLevel().addObject(dronePack);
 
 	}
-
-	
-
-	//camera rotate,
 	
 	//engine.visibleCollisions = true;
 
 	engine.Initialize(gameWindow);
-	
-
 	
 }
