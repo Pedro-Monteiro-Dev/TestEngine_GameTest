@@ -5,7 +5,7 @@
 GameEngine::Engine engine;
 Input input;
 
-float globalRotation = -90.0f;
+float globalRotation = 90.0f;
 
 bool CompanionListBool[2] = { false,false };
 
@@ -88,7 +88,7 @@ public:
 
 class missile : public GameObject {
 public:
-	float moveSpeed = 200.0f;
+	float moveSpeed = -250.0f;
 
 	int firePower = 0;
 	int missileDamage = 1;
@@ -142,7 +142,7 @@ public:
 		position.x -= moveSpeed * engine.deltaTime;
 		//std::cout << position.y <<"\n";
 
-		if (position.x < -32) {
+		if (position.x > 640) {
 			Destroy();
 		}
 
@@ -153,7 +153,7 @@ public:
 
 class rusher : public Enemy {
 public:
-	float moveSpeed = 150.0f;
+	float moveSpeed = -150.0f;
 	void OnStart() override {
 
 		healthPoints = 2;
@@ -181,7 +181,7 @@ public:
 
 		position.x += moveSpeed * engine.deltaTime;
 
-		if (position.x > 640) {
+		if (position.x < -64) {
 			Destroy();
 		}
 
@@ -217,7 +217,7 @@ public:
 
 class drone : public Enemy {
 public:
-	float moveSpeed = 60.0f;
+	float moveSpeed = -60.0f;
 	float sinOffset = 0.0f;
 	int packID = 0;
 
@@ -232,7 +232,7 @@ public:
 
 		//(packID * 0.1)
 
-		sinOffset += (packID *32);
+		sinOffset -= (packID *32);
 	}
 
 	void OnUpdate() override {
@@ -243,7 +243,7 @@ public:
 		position.y = position.y - sin(sinOffset);
 
 
-		if (position.x > 640) {
+		if (position.x < -32) {
 			Destroy();
 		}
 
@@ -275,7 +275,7 @@ public:
 
 class enemyProjectile : public GameObject {
 public:
-	float moveSpeed = 200.0f;
+	float moveSpeed = -250.0f;
 
 
 	void OnStart() override {
@@ -291,8 +291,9 @@ public:
 		position.x += moveSpeed * engine.deltaTime;
 
 		
-		if (position.y > 640) {
+		if (position.x < -16) {
 			Destroy();
+			
 		}
 	}
 
@@ -300,7 +301,7 @@ public:
 
 class metalAsteroid : public GameObject {
 public:
-	float moveSpeed = 60.0f;
+	float moveSpeed = -60.0f;
 	int asteroidSize = 32;
 
 	void OnStart() override {
@@ -332,8 +333,9 @@ public:
 	void OnUpdate() override {
 		position.x += moveSpeed * engine.deltaTime;
 
-		if (position.x > 640) {
+		if (position.x < -96) {
 			Destroy();
+			
 		}
 
 	}
@@ -354,7 +356,7 @@ public:
 
 	struct
 	{
-		float x = 60.0f;
+		float x = -60.0f;
 		float y = 0.0f;
 	}moveSpeed;
 
@@ -439,7 +441,7 @@ public:
 		position.x += moveSpeed.x * engine.deltaTime;
 		position.y += moveSpeed.y * engine.deltaTime;
 
-		if (position.x > 640) {
+		if (position.x < -96) {
 			Destroy();
 		}
 
@@ -550,7 +552,7 @@ public:
 
 		if (time > timeCooldown) {
 			enemyProjectile* enemyProj = new enemyProjectile();
-			enemyProj->position.x = position.x + 48;
+			enemyProj->position.x = position.x - 16;
 			enemyProj->position.y = position.y + 24;
 			engine.getLevel().addObject(enemyProj);
 
@@ -572,7 +574,7 @@ public:
 
 class powerUpMissile : public GameObject {
 public:
-	float moveSpeed = 30.0f;
+	float moveSpeed = -30.0f;
 
 
 	void OnStart() override {
@@ -586,7 +588,7 @@ public:
 	void OnUpdate() override {
 		position.x += moveSpeed * engine.deltaTime;
 
-		if (position.x > 640) {
+		if (position.x < -32) {
 			Destroy();
 		}
 
@@ -596,7 +598,7 @@ public:
 
 class powerUpHeal : public GameObject {
 public:
-	float moveSpeed = 30.0f;
+	float moveSpeed = -30.0f;
 
 
 	void OnStart() override {
@@ -610,7 +612,7 @@ public:
 	void OnUpdate() override {
 		position.x += moveSpeed * engine.deltaTime;
 
-		if (position.y > 480) {
+		if (position.x < -32) {
 			Destroy();
 		}
 
@@ -620,7 +622,7 @@ public:
 
 class powerUpCompanion : public GameObject {
 public:
-	float moveSpeed = 30.0f;
+	float moveSpeed = -30.0f;
 
 
 	void OnStart() override {
@@ -637,7 +639,7 @@ public:
 		
 		position.x += moveSpeed * engine.deltaTime;
 
-		if (position.x > 640) {
+		if (position.x < -32) {
 			Destroy();
 		}
 	}
@@ -656,7 +658,13 @@ public:
 
 	int positionOffset = 0;
 
-	int bulletOffset = 24;
+	
+	struct
+	{
+		int x = 0;//-60.0f;
+		int y = 0;//24;
+	}bulletOffset;
+	
 
 	void TakeShipDamage() {
 		shipHealth -= 1;
@@ -682,8 +690,8 @@ public:
 		if (GetAsyncKeyState(input.ShootAction[0]) & 0x8000) {
 			if (!keyPressed) {
 				missile* bullet = new missile();
-				bullet->position.x = position.x;
-				bullet->position.y = position.y + bulletOffset;
+				bullet->position.x = position.x + bulletOffset.x;
+				bullet->position.y = position.y + bulletOffset.y;
 				bullet->firePower = firePower;
 				engine.getLevel().addObject(bullet);
 
@@ -716,7 +724,10 @@ public:
 		keyPressed = false;
 		firePower = 0;
 		positionOffset = -50;
-		bulletOffset = 9;
+		
+		bulletOffset.x = 16;
+		bulletOffset.y = 9;
+		
 		recruted = false;
 
 		position.x = 0;
@@ -812,10 +823,13 @@ public:
 
 		movementSpeed = 200.0f;
 
+		bulletOffset.x = 64;
+		bulletOffset.y = 24;
+
 		animationState = 0;
 		objectGroup = "player";
 
-		position.x = 550.0f;
+		position.x = 64.0f;
 		position.y = 208.0f;
 
 		collisionBoxSize.w = collisionBoxSize.h = 64.0f;
@@ -973,78 +987,78 @@ int main()
 	companionList[1] = cloneB;
 
 	rusher* enemyA = new rusher();
-	enemyA->position.x = -150.0f;
+	enemyA->position.x = 650.0f;
 	enemyA->position.y = 150.0f;
 
 	rusher* enemyB = new rusher();
-	enemyB->position.x = -200.0f;
+	enemyB->position.x = 600.0f;
 	enemyB->position.y = 200.0f;
 
 	rusher* enemyC = new rusher();
-	enemyC->position.x = -1750.0f;
+	enemyC->position.x = 4150.0f;
 	enemyC->position.y = 150.0f;
 
 	rusher* enemyD = new rusher();
-	enemyD->position.x = -1700.0f;
+	enemyD->position.x = 4100.0f;
 	enemyD->position.y = 200.0f;
 
 	loner* lonerA = new loner();
-	lonerA->position.x = 240.0f;
-	lonerA->position.y = -150.0f;
+	lonerA->position.x = 340.0f;
+	lonerA->position.y = -250.0f;
 
 	metalAsteroid* metalAsteroidA = new metalAsteroid();
-	metalAsteroidA->position.x = 0.0f;
-	metalAsteroidA->position.y = 250.0f;
+	metalAsteroidA->position.x = 1500.0f;
+	metalAsteroidA->position.y = 150.0f;
 	metalAsteroidA->asteroidSize = 96;
 
 	metalAsteroid* metalAsteroidB = new metalAsteroid();
-	metalAsteroidB->position.x = -400.0f;
-	metalAsteroidB->position.y = 250.0f;
+	metalAsteroidB->position.x = 1400.0f;
+	metalAsteroidB->position.y = 350.0f;
 	metalAsteroidB->asteroidSize = 32;
 
 	stoneAsteroid* stoneAsteroidA = new stoneAsteroid();
-	stoneAsteroidA->position.x = -300.0f;
-	stoneAsteroidA->position.y = 100.0f;
+	stoneAsteroidA->position.x = 1300.0f;
+	stoneAsteroidA->position.y = 200.0f;
 	stoneAsteroidA->asteroidSize = 96;
 
 	powerUpMissile* powerUpA = new powerUpMissile();
-	powerUpA->position.x = -300.0f;
-	powerUpA->position.y = 370.0f;
+	powerUpA->position.x = 300.0f;
+	powerUpA->position.y = 270.0f;
 
 	powerUpMissile* powerUpB = new powerUpMissile();
-	powerUpB->position.x = -550.0f;
-	powerUpB->position.y = 380.0f;
+	powerUpB->position.x = 650.0f;
+	powerUpB->position.y = 80.0f;
 
 	powerUpMissile* powerUpC = new powerUpMissile();
-	powerUpC->position.x = -800.0f;
-	powerUpC->position.y = 190.0f;
+	powerUpC->position.x = 900.0f;
+	powerUpC->position.y = 90.0f;
 
 	powerUpHeal* powerUpHealA = new powerUpHeal();
-	powerUpHealA->position.x = 450.0f;
+	powerUpHealA->position.x = 1650.0f;
 	powerUpHealA->position.y = 190.0f;
 
 	powerUpHeal* powerUpHealB = new powerUpHeal();
-	powerUpHealB->position.x = -800.0f;
+	powerUpHealB->position.x = 1050.0f;
 	powerUpHealB->position.y = 190.0f;
 
 	powerUpHeal* powerUpHealC = new powerUpHeal();
-	powerUpHealC->position.x = -850.0f;
+	powerUpHealC->position.x = 1150.0f;
 	powerUpHealC->position.y = 250.0f;
 
 	powerUpCompanion* powerUpCompanionA = new powerUpCompanion();
-	powerUpCompanionA->position.x = 300.0f;
+	powerUpCompanionA->position.x = 1300.0f;
 	powerUpCompanionA->position.y = 50.0f;
 
 	powerUpCompanion* powerUpCompanionB = new powerUpCompanion();
-	powerUpCompanionB->position.x = 350.0f;
-	powerUpCompanionB->position.y = 50.0f;
+	powerUpCompanionB->position.x = 1150.0f;
+	powerUpCompanionB->position.y = 400.0f;
 
 	powerUpCompanion* powerUpCompanionC = new powerUpCompanion();
-	powerUpCompanionC->position.x = -400.0f;
+	powerUpCompanionC->position.x = 400.0f;
 	powerUpCompanionC->position.y = 32.0f;
 
 	powerUpCompanion* powerUpCompanionD = new powerUpCompanion();
-	powerUpCompanionD->position.x = -800.0f;
+	powerUpCompanionD->position.x = 800.0f;
 	powerUpCompanionD->position.y = 32.0f;
 
 	engine.getLevel().addObject(ship);
@@ -1061,10 +1075,11 @@ int main()
 	engine.getLevel().addObject(metalAsteroidA);
 	engine.getLevel().addObject(metalAsteroidB);
 	engine.getLevel().addObject(stoneAsteroidA);
-	
+
 	engine.getLevel().addObject(powerUpA);
 	engine.getLevel().addObject(powerUpB);
 	engine.getLevel().addObject(powerUpC);
+	
 	
 	engine.getLevel().addObject(powerUpHealA);
 	engine.getLevel().addObject(powerUpHealB);
@@ -1081,7 +1096,7 @@ int main()
 	{
 
 		drone* dronePack = new drone();
-		dronePack->position.x = -600.0f + (i * 35);
+		dronePack->position.x = 800.0f + (i * 35);
 		dronePack->position.y = 350.0f ;
 		dronePack->packID = i;
 

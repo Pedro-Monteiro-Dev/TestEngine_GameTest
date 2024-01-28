@@ -13,8 +13,6 @@ public:
 
 	struct
 	{
-		//int x = 0;
-		//int y = 0;
 		float w = 0.0f;
 		float h = 0.0f;
 
