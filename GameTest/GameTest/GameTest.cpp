@@ -13,9 +13,7 @@ class Enemy : public GameObject {
 public:
 	int healthPoints = 1;
 
-	float damageFeedbackTimer = 0;
-	float damageFeedbackDuration = 5;
-	float damageFeedbackSpeed = 2;
+	
 
 	void showDamageFeedback() {
 		modulate.r = 255;
@@ -64,6 +62,10 @@ public:
 			
 		}
 	}
+private:
+	float damageFeedbackTimer = 0;
+	float damageFeedbackDuration = 5;
+	float damageFeedbackSpeed = 2;
 
 };
 
