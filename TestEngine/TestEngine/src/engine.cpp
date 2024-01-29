@@ -365,7 +365,7 @@ namespace GameEngine {
 							SDL_Color myColor = { getLevel().levelObjects[i]->modulate.r, getLevel().levelObjects[i]->modulate.g, getLevel().levelObjects[i]->modulate.b,255};
 
 							SDL_SetTextureColorMod(sprite, myColor.r,myColor.g,myColor.b);
-							//SDL_RenderCopy(renderTarget, sprite, &spriteRect, &spritePos);
+							
 							SDL_RenderCopyEx(renderTarget, sprite, &spriteRect, &spritePos, getLevel().levelObjects[i]->rotation, NULL, SDL_FLIP_NONE);
 						}
 						
@@ -455,8 +455,8 @@ namespace GameEngine {
 				{
 					SDL_Rect r;
 
-					r.x = body->GetPosition().x;//bodyDef.position.x;
-					r.y = body->GetPosition().y;//bodyDef.position.y; | f
+					r.x = body->GetPosition().x;
+					r.y = body->GetPosition().y;
 					r.w = getLevel().levelObjects[i]->collisionBoxSize.w;
 					r.h = getLevel().levelObjects[i]->collisionBoxSize.h;
 

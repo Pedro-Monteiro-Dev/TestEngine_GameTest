@@ -309,6 +309,8 @@ public:
 		int textureDimentions[2] = { 8,2 };
 		animation = Animation("resources/graphics/MAster32.bmp", 0.1f, textureDimentions, true, {});
 		
+		objectGroup = "enemy";
+
 		switch (asteroidSize) {
 			case 64:
 				textureDimentions[0] = 8;
@@ -365,6 +367,8 @@ public:
 	void OnStart() override {
 
 		int textureDimentions[2];
+
+		objectGroup = "enemy";
 
 		switch (asteroidSize) {
 			case 64:
@@ -672,6 +676,9 @@ public:
 	int positionOffset = 0;
 
 	
+	float damageCooldownDefault = 1;
+	float damageCooldown = 0;
+	
 	struct
 	{
 		int x = 0;//-60.0f;
@@ -680,8 +687,24 @@ public:
 	
 
 	void TakeShipDamage() {
-		shipHealth -= 1;
+		if(damageCooldown <= 0)
+		{
+			shipHealth -= 1;
+			damageCooldown = damageCooldownDefault;
+		}
 	}
+
+	void checkDamageCooldown() {
+		if (damageCooldown > 0)
+		{
+			damageCooldown -= 1 * engine.deltaTime;
+		}
+		else {
+			damageCooldown = 0;
+		}
+		//std::cout << damageCooldown << "\n";
+	}
+
 	void HealShip() {
 		int healAmount = 2;
 
@@ -767,22 +790,14 @@ public:
 	}
 
 	void OnUpdate() override {
+		
 		if(recruted)
 		{
 			ShootCheck();
 			SetPosition();
-
-		}
-	}
-
-	void OnCollideEnter(GameObject& contact) override {
-		if (contact.objectGroup == "enemyBullet") {
-			explosion* boom = new explosion();
-			boom->position.x = position.x;
-			boom->position.y = position.y;
-			engine.getLevel().addObject(boom);
-			contact.Destroy();
-			TakeShipDamage();
+			checkDamageCooldown();
+			
+			
 			if (shipHealth == 0)
 			{
 				if (companionId == 1)
@@ -802,10 +817,27 @@ public:
 			}
 			
 		}
+	}
+
+	void OnCollideEnter(GameObject& contact) override {
+		if (contact.objectGroup == "enemyBullet") {
+			explosion* boom = new explosion();
+			boom->position.x = position.x;
+			boom->position.y = position.y;
+			engine.getLevel().addObject(boom);
+			contact.Destroy();
+			TakeShipDamage();
+			
+			
+		}
 
 		if (contact.objectGroup == "powerUpMissile") {
 			UpgradeFirePower();
 			contact.Destroy();
+		}
+
+		if (contact.objectGroup == "enemy") {
+			TakeShipDamage();
 		}
 
 		if (contact.objectGroup == "powerUpHeal") {
@@ -824,7 +856,7 @@ public:
 	std::string currentAnimation = "";
 	int animationState = 0;
 
-	
+	bool isGameOver = false;
 
 	void OnStart() override {
 		int textureDimentions[2] = { 7,1 };
@@ -871,34 +903,38 @@ public:
 		int textureDimentions[2] = { 7,1 };
 
 
-		ShootCheck();
-
-		if (GetKeyState(input.MoveLeft[0]) & 0x8000)
+		if(isGameOver == false)
 		{
-			position.x -= movementSpeed * engine.deltaTime;
-		}
-		else if (GetKeyState(input.MoveRight[0]) & 0x8000)
-		{
-			position.x += movementSpeed * engine.deltaTime;
+			ShootCheck();
+			checkDamageCooldown();
 
-		}
+			if (GetKeyState(input.MoveLeft[0]) & 0x8000)
+			{
+				position.x -= movementSpeed * engine.deltaTime;
+			}
+			else if (GetKeyState(input.MoveRight[0]) & 0x8000)
+			{
+				position.x += movementSpeed * engine.deltaTime;
+
+			}
 		
 
-		if (GetKeyState(input.MoveUp[0]) & 0x8000)
-		{
-			position.y -= movementSpeed * engine.deltaTime;
-			animationState = 1;
-		}
-		else if (GetKeyState(input.MoveDown[0]) & 0x8000)
-		{
-			position.y += movementSpeed * engine.deltaTime;
-			animationState = 2;
-		}
-		else
-		{
-			animationState = 0;
-		}
+			if (GetKeyState(input.MoveUp[0]) & 0x8000)
+			{
+				position.y -= movementSpeed * engine.deltaTime;
+				animationState = 1;
+			}
+			else if (GetKeyState(input.MoveDown[0]) & 0x8000)
+			{
+				position.y += movementSpeed * engine.deltaTime;
+				animationState = 2;
+			}
+			else
+			{
+				animationState = 0;
+			}
 		
+		}
 
 		if (animationState==1 && currentAnimation != "Up")
 		{
@@ -919,6 +955,29 @@ public:
 			animation = Animation("resources/graphics/Ship1.bmp", 0.1f, textureDimentions, false, { AnimationCoord(3,0) });
 			animation.spriteIndex = 0;
 		}
+
+
+		if (shipHealth <= 0 && isGameOver == false) {
+			isGameOver = true;
+
+			CompanionListBool[0] = false;
+			CompanionListBool[1] = false;
+			
+			if (companion* companionObject = dynamic_cast<companion*>(engine.getLevel().levelObjects[1])) {
+				companionObject->recruted = false;
+				companionObject->position.x = 0.0f;
+				companionObject->position.y = 1000.0f;
+			}
+			
+			if (companion* companionObject = dynamic_cast<companion*>(engine.getLevel().levelObjects[2])) {
+				companionObject->recruted = false;
+				companionObject->position.x = 0.0f;
+				companionObject->position.y = 1000.0f;
+			}
+
+			position.x = 1000.0f;
+			position.y = 1000.0f;
+		}
 	}
 
 	void OnCollideEnter(GameObject& contact) override {
@@ -934,6 +993,11 @@ public:
 		if (contact.objectGroup == "powerUpMissile") {
 			UpgradeFirePower();
 			contact.Destroy();
+		}
+
+		if (contact.objectGroup == "enemy") {
+			TakeShipDamage();
+			//engine.print("a");
 		}
 
 		if (contact.objectGroup == "powerUpHeal") {
@@ -980,7 +1044,7 @@ int main()
 	LevelBackground backgroundLayer2;
 
 	backgroundLayer2.background_path = "resources/graphics/GAster96.bmp";
-	backgroundLayer2.scrollingSpeed = 10;
+	backgroundLayer2.scrollingSpeed = -10;
 	backgroundLayer2.scrollingDirection = backgroundLayer2.horizontal;
 
 	//engine.print("print test");
@@ -1018,6 +1082,11 @@ int main()
 	loner* lonerA = new loner();
 	lonerA->position.x = 340.0f;
 	lonerA->position.y = -250.0f;
+
+	loner* lonerB = new loner();
+	lonerB->position.x = 240.0f;
+	lonerB->position.y = 250.0f;
+	lonerB->moveSpeed = 0.0f;
 
 	metalAsteroid* metalAsteroidA = new metalAsteroid();
 	metalAsteroidA->position.x = 1500.0f;
@@ -1102,6 +1171,8 @@ int main()
 	engine.getLevel().addObject(powerUpCompanionB);
 	engine.getLevel().addObject(powerUpCompanionC);
 	engine.getLevel().addObject(powerUpCompanionD);
+
+	//engine.getLevel().addObject(lonerB);
 	
 	//Drone Pack
 
@@ -1122,3 +1193,4 @@ int main()
 	engine.Initialize(gameWindow);
 	
 }
+
