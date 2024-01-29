@@ -674,10 +674,6 @@ public:
 	int firePower = 0;
 
 	int positionOffset = 0;
-
-	
-	float damageCooldownDefault = 1;
-	float damageCooldown = 0;
 	
 	struct
 	{
@@ -740,7 +736,9 @@ public:
 		}
 
 	};
-
+private:
+	float damageCooldownDefault = 1;
+	float damageCooldown = 0;
 };
 
 class companion : public ally {
