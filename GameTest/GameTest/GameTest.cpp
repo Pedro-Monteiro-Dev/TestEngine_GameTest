@@ -396,6 +396,7 @@ public:
 	void OnDestroyed() override {
 		stoneAsteroid* asteroid1 = new stoneAsteroid();
 		stoneAsteroid* asteroid2 = new stoneAsteroid();
+		stoneAsteroid* asteroid3 = new stoneAsteroid();
 
 		switch (asteroidSize) {
 			case 64:
@@ -410,8 +411,14 @@ public:
 				asteroid2->asteroidSize = 32;
 				asteroid2->moveSpeed.y = -32.0f;
 
+				asteroid3->position.x = position.x;
+				asteroid3->position.y = position.y;
+				asteroid3->asteroidSize = 32;
+				asteroid3->moveSpeed.x = -128.0f;
+
 				engine.getLevel().addObject(asteroid1);
 				engine.getLevel().addObject(asteroid2);
+				engine.getLevel().addObject(asteroid3);
 
 				break;
 			case 96:
@@ -426,8 +433,14 @@ public:
 				asteroid2->asteroidSize = 64;
 				asteroid2->moveSpeed.y = -32.0f;
 
+				asteroid3->position.x = position.x;
+				asteroid3->position.y = position.y;
+				asteroid3->asteroidSize = 64;
+				asteroid3->moveSpeed.x = -128.0f;
+
 				engine.getLevel().addObject(asteroid1);
 				engine.getLevel().addObject(asteroid2);
+				engine.getLevel().addObject(asteroid3);
 				break;
 			default:
 
